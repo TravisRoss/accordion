@@ -25,39 +25,38 @@ export default function App() {
 }
 
 function Accordion({ data }) {
+  const [currentlyOpen, setCurrentlyOpen] = useState(null);
+
   return (
     <div className="accordion">
       {data.map((item, i) => (
         <AccordionItem
+          currentlyOpen={currentlyOpen}
+          onOpen={setCurrentlyOpen}
           title={item.title}
-          text={item.text}
-          number={i}
+          num={i}
           key={item.title}
-        />
+        >
+          {item.text}
+        </AccordionItem>
       ))}
     </div>
   );
 }
 
-function AccordionItem({ number, title, text, key }) {
-  const [isOpen, setIsOpen] = useState(false);
+function AccordionItem({ currentlyOpen, onOpen, num, title, key, children }) {
+  const isOpen = num === currentlyOpen;
 
   function handleItemClick(e) {
-    setIsOpen((isOpen) => !isOpen);
+    onOpen(isOpen ? null : num);
   }
 
-  function handleMouseOverClick(e) {}
-
   return (
-    <div
-      className={`item ${isOpen ? "open" : ""}`}
-      onClick={handleItemClick}
-      onMouseOver={(e) => handleMouseOverClick(e)}
-    >
-      <p className="number">{number < 9 ? `0${number + 1}` : number + 1}</p>
+    <div className={`item ${isOpen ? "open" : ""}`} onClick={handleItemClick}>
+      <p className="num">{num < 9 ? `0${num + 1}` : num + 1}</p>
       <p className="title">{title}</p>
       <p className="icon">{isOpen ? "-" : "+"}</p>
-      {isOpen && <div className="content-box">{text}</div>}
+      {isOpen && <div className="content-box">{children}</div>}
     </div>
   );
 }
